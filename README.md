@@ -1,4 +1,4 @@
-# Video Anomaly & Weapon Detection System
+# Real-time Monitoring of CCTV Cameras for Threat Detection
 
 This project is an advanced computer vision system designed to detect anomalies (such as violence/fights) and weapons in both pre-recorded videos and live camera streams. It leverages PyTorch-based 3D/2D CNNs for temporal action detection and Ultralytics YOLOv11 for real-time object detection.
 
@@ -63,7 +63,7 @@ This project is an advanced computer vision system designed to detect anomalies 
    - `thebest.onnx`
 
    **Method 2: Using Python**
-   You can install `huggingface_hub` (`pip install huggingface_hub`) and download them via command line:
+   You can install `huggingface_hub` (`pip install huggingface_hub`) and download them via the command line:
    ```bash
    huggingface-cli download Suhas1805/Live_Anomaly_and_Weapon_Detection video_violence_detector.pt --local-dir models/
    huggingface-cli download Suhas1805/Live_Anomaly_and_Weapon_Detection human_detector.pt --local-dir models/
