@@ -68,5 +68,5 @@ test_videos/
 tv1/
 
 # Models (Optional: Comment out if you want to push models to github, but they are usually too large)
-# models/*.pt
-# models/*.onnx
+models/*.pt
+models/*.onnx

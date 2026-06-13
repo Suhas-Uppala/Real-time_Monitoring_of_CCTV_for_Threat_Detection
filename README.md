@@ -54,10 +54,21 @@ This project is an advanced computer vision system designed to detect anomalies 
    ```
 
 4. **Prepare Models:**
-   Ensure the required models are placed inside the `models/` directory:
+   The trained models are hosted on Hugging Face. You must download them and place them in the `models/` directory.
+
+   **Method 1: Manual Download**
+   Download the following files from [Suhas1805/Live_Anomaly_and_Weapon_Detection](https://huggingface.co/Suhas1805/Live_Anomaly_and_Weapon_Detection/tree/main) and place them in the `models/` folder:
    - `video_violence_detector.pt`
    - `human_detector.pt`
    - `thebest.onnx`
+
+   **Method 2: Using Python**
+   You can install `huggingface_hub` (`pip install huggingface_hub`) and download them via command line:
+   ```bash
+   huggingface-cli download Suhas1805/Live_Anomaly_and_Weapon_Detection video_violence_detector.pt --local-dir models/
+   huggingface-cli download Suhas1805/Live_Anomaly_and_Weapon_Detection human_detector.pt --local-dir models/
+   huggingface-cli download Suhas1805/Live_Anomaly_and_Weapon_Detection thebest.onnx --local-dir models/
+   ```
 
 ## 🚀 Usage
 
@@ -81,6 +92,18 @@ python live_inference.py --url 0
 python live_inference.py --url http://192.168.1.50:8080/video
 python live_inference.py --url rtsp://192.168.1.50:8554/stream
 ```
+
+### Web Application Dashboard
+
+The `web1/` directory contains a full-featured Flask web application that serves as the main dashboard for monitoring and managing alerts.
+
+**Running the Web App:**
+Navigate into the `web1` directory and run the `app.py` script:
+```bash
+cd web1
+python app.py
+```
+After starting the server, open your web browser and go to `http://localhost:5000` to view the dashboard.
 
 ### Weapon Detection
 
