@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionGuard | Advanced Security</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0d;
+            --bg-sidebar: #111116;
+            --bg-card: #16161f;
+            --primary: #8162ff;
+            --primary-glow: rgba(129, 98, 255, 0.35);
+            --danger: #ff4d4d;
+            --danger-glow: rgba(255, 77, 77, 0.2);
+            --success: #00e699;
+            --warning: #ffcc00;
+            --text-main: #f0f0f5;
+            --text-dim: #9494a5;
+            --border: #252533;
+            --sidebar-width: 260px;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main);
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        .layout { display: flex; height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            flex-shrink: 0;
+            padding: 35px 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 50px;
+            padding-left: 10px;
+        }
+        .logo i {
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .nav { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        .nav-link i { font-size: 1.2rem; width: 24px; text-align: center; }
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .bottom-status {
+            padding: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--success);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .top-bar h1 { font-size: 2.2rem; font-weight: 700; }
+
+        .btn-action {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-action:hover {
+            background: #20202a;
+            border-color: #444;
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #6e4df5;
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        /* CARDS & TABLES */
+        .glass-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            transition: var(--transition);
+        }
+        .glass-card:hover { border-color: #35354a; }
+
+        .badge {
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+        }
+        .badge-danger { background: var(--danger-glow); color: var(--danger); border: 1px solid rgba(255, 77, 77, 0.3); }
+        .badge-success { background: rgba(0, 230, 153, 0.1); color: var(--success); border: 1px solid rgba(0, 230, 153, 0.3); }
+
+        .status-dot-small { 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%; 
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .dot-new { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+        .dot-resolved { background: var(--success); }
+
+        /* Shared Utility Classes */
+        .text-dim { color: var(--text-dim); }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-10 { gap: 10px; }
+        
+        /* TABLE REFINEMENT */
+        .table-card { padding: 0 !important; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; 
+            padding: 18px 24px; 
+            background: rgba(255,255,255,0.015); 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: var(--text-dim); 
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        td { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        tr:hover td { background: rgba(255,255,255,0.01); }
+        
+        .evidence-img { 
+            width: 80px; 
+            height: 50px; 
+            border-radius: 10px; 
+            object-fit: cover; 
+            background: #111;
+            border: 1px solid var(--border);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse-red { animation: pulse 1.5s infinite; background: var(--danger) !important; box-shadow: 0 0 15px var(--danger); }
+
+        /* TOGGLE SWITCH */
+        .toggle-section {
+            margin-top: 16px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .toggle-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toggle-label i {
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #2a2a3a;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: #666;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+            background: #fff;
+        }
+        .toggle-status {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved"></i>
+                VisionGuard
+            </div>
+            <nav class="nav">
+                <a href="{{ url_for('dashboard') }}" class="nav-link"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+                <a href="{{ url_for('alerts_history') }}" class="nav-link"><i class="fa-solid fa-bell"></i> Alerts</a>
+                <a href="#" class="nav-link"><i class="fa-solid fa-video"></i> Cameras</a>
+                <a href="#" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+                <a href="#" class="nav-link"><i class="fa-solid fa-sliders"></i> Settings</a>
+            </nav>
+            <div class="toggle-section">
+                <div class="toggle-row">
+                    <div class="toggle-label">
+                        <i class="fa-solid fa-brain"></i>
+                        Anomaly AI
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="anomaly-toggle" checked onchange="toggleAnomaly()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-status" id="anomaly-toggle-status" style="color: var(--success);">● ACTIVE</div>
+                <div style="border-top: 1px solid var(--glass-border); margin: 12px 0;"></div>
+                <div class="toggle-row">
+                    <div class="toggle-label">
+                        <i class="fa-solid fa-clock"></i>
+                        Alert Cooldown
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cooldown-toggle" checked onchange="toggleCooldown()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-status" id="cooldown-toggle-status" style="color: var(--success);">● 60s COOLDOWN</div>
+            </div>
+            <div class="bottom-status">
+                <div class="status-dot" id="system-dot"></div>
+                <span id="system-text">System Online</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div id="alert-banner" style="display: none; background: var(--danger); color: white; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-weight: 700; text-align: center; box-shadow: 0 0 20px var(--danger-glow);">
+                ⚠️ <span id="alert-banner-text">THREAT DETECTED</span>
+            </div>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Active Navigation Highlight
+        const path = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === path) {
+                link.classList.add('active');
+            }
+        });
+
+        // Global Stats Polling for Sidebar Status & Banner
+        function pollGlobal() {
+            fetch('/api/stats')
+                .then(res => res.json())
+                .then(data => {
+                    const dot = document.getElementById('system-dot');
+                    const banner = document.getElementById('alert-banner');
+                    const bannerText = document.getElementById('alert-banner-text');
+                    if (data.threat_active) {
+                        dot.classList.add('pulse-red');
+                        if (banner) {
+                            banner.style.display = 'block';
+                            if (bannerText) bannerText.innerText = data.threat_type + ' DETECTED — LIVE ALERT';
+                        }
+                    } else {
+                        dot.classList.remove('pulse-red');
+                        if (banner) banner.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error("Stats poll failed:", err));
+        }
+        setInterval(pollGlobal, 2000);
+
+        // Anomaly Toggle
+        function toggleAnomaly() {
+            fetch('/api/toggle_anomaly', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    updateToggleUI(data.anomaly_enabled);
+                })
+                .catch(err => console.error('Toggle failed:', err));
+        }
+
+        function updateToggleUI(enabled) {
+            var toggle = document.getElementById('anomaly-toggle');
+            var statusEl = document.getElementById('anomaly-toggle-status');
+            toggle.checked = enabled;
+            if (enabled) {
+                statusEl.innerHTML = '● ACTIVE';
+                statusEl.style.color = 'var(--success)';
+            } else {
+                statusEl.innerHTML = '● DISABLED';
+                statusEl.style.color = 'var(--text-dim)';
+            }
+        }
+
+        // Sync toggle state on page load and periodically
+        function syncToggleState() {
+            fetch('/api/stats')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.anomaly_enabled !== undefined) {
+                        updateToggleUI(data.anomaly_enabled);
+                    }
+                    if (data.cooldown_enabled !== undefined) {
+                        updateCooldownUI(data.cooldown_enabled);
+                    }
+                })
+                .catch(() => {});
+        }
+        syncToggleState();
+
+        // Cooldown Toggle
+        function toggleCooldown() {
+            fetch('/api/toggle_cooldown', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    updateCooldownUI(data.cooldown_enabled);
+                })
+                .catch(err => console.error('Toggle failed:', err));
+        }
+
+        function updateCooldownUI(enabled) {
+            var toggle = document.getElementById('cooldown-toggle');
+            var statusEl = document.getElementById('cooldown-toggle-status');
+            toggle.checked = enabled;
+            if (enabled) {
+                statusEl.innerHTML = '● 60s COOLDOWN';
+                statusEl.style.color = 'var(--success)';
+            } else {
+                statusEl.innerHTML = '● INSTANT ALERTS';
+                statusEl.style.color = 'var(--warning)';
+            }
+        }
+    </script>
+</body>
+</html>

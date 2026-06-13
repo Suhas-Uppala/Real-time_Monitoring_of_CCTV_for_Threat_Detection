@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="top-bar">
+    <a href="{{ url_for('alerts_history') }}" class="btn-action">
+        <i class="fa-solid fa-arrow-left"></i> Back to History
+    </a>
+    <div>
+        <h1>Security Event #{{ alert.id }}</h1>
+        <p class="text-dim" style="margin-top: 5px;">Incident Investigation Report</p>
+    </div>
+</div>
+
+<div class="glass-card" style="margin-bottom: 32px; padding: 0; overflow: hidden; border: 1px solid var(--border);">
+    <div style="padding: 30px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01);">
+        <div class="flex justify-between items-start">
+            <div>
+                {% if 'WEAPON' in alert.type and 'ANOMALY' in alert.type %}
+                    <span class="badge badge-danger" style="font-size: 0.9rem; padding: 6px 16px;">CRITICAL — DUAL THREAT</span>
+                    <h2 style="font-size: 1.8rem; margin-top: 15px;">WEAPON + ANOMALY DETECTED</h2>
+                {% elif 'WEAPON' in alert.type %}
+                    <span class="badge badge-danger" style="font-size: 0.9rem; padding: 6px 16px;">CRITICAL ALERT</span>
+                    <h2 style="font-size: 1.8rem; margin-top: 15px;">WEAPON DETECTED</h2>
+                {% else %}
+                    <span class="badge" style="font-size: 0.9rem; padding: 6px 16px; background: rgba(255,204,0,0.1); color: #ffcc00; border: 1px solid rgba(255,204,0,0.3);">ANOMALY ALERT</span>
+                    <h2 style="font-size: 1.8rem; margin-top: 15px;">ANOMALY DETECTED</h2>
+                {% endif %}
+                <div class="flex gap-10 text-dim" style="margin-top: 12px; font-size: 0.95rem;">
+                    <span><i class="fa-solid fa-location-dot"></i> {{ alert.location }}</span>
+                    <span>•</span>
+                    <span><i class="fa-solid fa-calendar"></i> {{ alert.timestamp }}</span>
+                    <span>•</span>
+                    <span style="color: var(--success); font-weight: 700;">Score: {{ (alert.confidence * 100)|int }}%</span>
+                    <span>•</span>
+                    <span style="font-weight: 600;">Type: {{ alert.type }}</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="flex items-center" style="background: var(--bg-dark); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div class="status-dot-small {{ 'dot-new' if alert.status=='New' else 'dot-resolved' }}"></div>
+                    <span style="font-weight: 700; font-size: 1.1rem;">{{ alert.status }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: #000; padding: 0;">
+        <img src="/detections/{{ alert.image_path }}" style="width: 100%; display: block; max-height: 500px; object-fit: contain;" alt="Evidence Snapshot">
+    </div>
+</div>
+
+<div class="main-grid" style="grid-template-columns: 1fr 1fr; gap: 32px;">
+    <div class="glass-card" style="display: flex; flex-direction: column; gap: 20px;">
+        <h3 style="font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 15px;">Event Metadata</h3>
+        <div class="flex justify-between">
+            <span class="text-dim">Camera ID</span>
+            <span style="font-weight: 600;">CAM_01_INPUT</span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-dim">Source IP</span>
+            <span style="font-weight: 600;">10.100.7.94</span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-dim">Detection Engine</span>
+            <span style="font-weight: 600;">VisionGuard Neural v4.0</span>
+        </div>
+        <div class="flex justify-row gap-10" style="margin-top: 20px;">
+            {% if alert.status == 'New' %}
+            <button class="btn-action btn-primary" style="flex: 1;" onclick="resolveByApi('{{ alert.id }}')">Mark as Resolved</button>
+            {% endif %}
+            <button class="btn-action" style="flex: 1;"><i class="fa-solid fa-share-nodes"></i> Share Report</button>
+        </div>
+    </div>
+
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 24px;">
+        <div style="width: 60px; height: 60px; background: rgba(129, 98, 255, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+            <i class="fa-solid fa-circle-play"></i>
+        </div>
+        <div>
+            <h4 style="font-size: 1.15rem;">Video Evidence Captured</h4>
+            <p class="text-dim" style="font-size: 0.85rem; margin-top: 8px;">A security clip was archived for this incident.</p>
+        </div>
+        <div class="flex gap-10">
+            <a href="/detections/{{ alert.video_path }}" class="btn-action btn-primary" download>
+                <i class="fa-solid fa-download"></i> Save Video
+            </a>
+            <button class="btn-action" onclick="alert('Playback integration in progress...')">
+                <i class="fa-solid fa-eye"></i> View Clip
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function resolveByApi(id) {
+        fetch(`/api/resolve/${id}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    }
+</script>
+{% endblock %}
